@@ -1,6 +1,9 @@
 # Learn_Computer_Vision
 This is the curriculum for "Learn Computer Vision" by Siraj Raval on Youtube
 
+## T: Why is this forked?
+The repository is forked to track my progress and all homeworks/mini-projects done during learning.
+
 ## Course Objective
 This is the Curriculum for [this](https://youtu.be/FSe_02FpJas) video on Learn Computer Vision by Siraj Raval on Youtube. After completing this course, start your own startup, do consulting work, or find a full-time job related to Computer Vision.
 Remember to believe in your ability to learn. You can learn CV , you will learn CV, and if you stick to it,
