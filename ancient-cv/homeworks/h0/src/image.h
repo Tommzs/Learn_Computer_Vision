@@ -17,7 +17,6 @@ void hsv_to_rgb(image im);
 void shift_image(image im, int c, float v);
 void clamp_image(image im);
 
-
 // Loading and saving
 image make_image(int w, int h, int c);
 image load_image(char *filename);
