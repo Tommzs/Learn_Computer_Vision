@@ -122,6 +122,8 @@ void test_nn_resize()
     image im = load_image("data/dogsmall.jpg");
     image resized = nn_resize(im, im.w*4, im.h*4);
     image gt = load_image("figs/dog4x-nn-for-test.png");
+    printf("im= %i x %i x %i", im.w, im.h, im.c);
+    printf("resized= %i x %i x %i", resized.w, resized.h, resized.c);
     TEST(same_image(resized, gt));
     free_image(im);
     free_image(resized);
