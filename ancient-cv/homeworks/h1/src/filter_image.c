@@ -73,9 +73,9 @@ image convolve_image(image im, image filter, int preserve)
 {
     assert(im.c == filter.c || filter.c == 1);
 
-    int i, j, k; 
-    int c = preserve ? im.c : 1;
-    image filtered = make_image(im.w, im.h, c);
+    int i, j, k;
+    image filtered;
+    image filtered_temp = make_image(im.w, im.h, im.c);
 
 
     if(im.c == filter.c)
@@ -86,23 +86,44 @@ image convolve_image(image im, image filter, int preserve)
             {
                 for(k = 0; k < im.c; k++)
                 {
-                    set_pixel(filtered, i, j, k, do_convolution(im, filter, i, j, k, k));
+                    set_pixel(filtered_temp, i, j, k, do_convolution(im, filter, i, j, k, k));
                 }
             }
         }
     }
     else
     {
-        for(i = 0; i < filtered.w; i++)
+        for(i = 0; i < im.w; i++)
         {
-            for(j = 0; j < filtered.h; j++)
+            for(j = 0; j < im.h; j++)
             {
-                for(k = 0; k < filtered.c; k++)
+                for(k = 0; k < im.c; k++)
                 {
-                    set_pixel(filtered, i, j, k, do_convolution(im, filter, i, j, k, 0));
+                    set_pixel(filtered_temp, i, j, k, do_convolution(im, filter, i, j, k, 0));
                 }
             }
         }
+    }
+
+    if(preserve == 0)
+    {
+        filtered = make_image(im.w, im.h, 1);
+        for(i = 0; i < im.w; i++)
+        {
+            for(j = 0; j < im.h; j++)
+            {
+                float val = 0.0f;
+                for(k = 0; k < im.c; k++)
+                {
+                    val += get_pixel(filtered_temp, i, j, k);
+                }
+                set_pixel(filtered, i, j, 0, val);
+            }
+        }
+    }
+    else
+    {
+        filtered = filtered_temp;
     }
     
     return filtered;
@@ -147,10 +168,10 @@ image make_gaussian_filter(float sigma)
     int x, y;
     int w = (int)ceil(sigma*6);
     float sigma2 = sigma*sigma;
-    image filter = make_image(w, w, 1);
     
     w = (w % 2 == 0) ? (w+1) : w;
 
+    image filter = make_image(w, w, 1);
     for(x = 0; x < w; x++)
     {
         for(y = 0; y < w; y++)
@@ -166,14 +187,46 @@ image make_gaussian_filter(float sigma)
 
 image add_image(image a, image b)
 {
-    // TODO
-    return make_image(1,1,1);
+    assert(a.w == b.w && a.h == b.h && a.c == b.c);
+
+    image summed = make_image(a.w, a.h, a.c);
+
+    int i, j, k;
+    for(i = 0; i < a.w; i++)
+    {
+        for(j = 0; j < a.h; j++)
+        {
+            for(k = 0; k < a.c; k++)
+            {
+                float summed_val = get_pixel(a, i, j, k)+get_pixel(b, i, j, k);
+                set_pixel(summed, i, j, k, summed_val);
+            }
+        }
+    }
+
+    return summed;
 }
 
 image sub_image(image a, image b)
 {
-    // TODO
-    return make_image(1,1,1);
+    assert(a.w == b.w && a.h == b.h && a.c == b.c);
+
+    image subtracted = make_image(a.w, a.h, a.c);
+
+    int i, j, k;
+    for(i = 0; i < a.w; i++)
+    {
+        for(j = 0; j < a.h; j++)
+        {
+            for(k = 0; k < a.c; k++)
+            {
+                float subtracted_val = get_pixel(b, i, j, k)-get_pixel(a, i, j, k);
+                set_pixel(subtracted, i, j, k, subtracted_val);
+            }
+        }
+    }
+
+    return subtracted;
 }
 
 image make_gx_filter()
