@@ -122,8 +122,6 @@ void test_nn_resize()
     image im = load_image("data/dogsmall.jpg");
     image resized = nn_resize(im, im.w*4, im.h*4);
     image gt = load_image("figs/dog4x-nn-for-test.png");
-    printf("im= %i x %i x %i", im.w, im.h, im.c);
-    printf("resized= %i x %i x %i", resized.w, resized.h, resized.c);
     TEST(same_image(resized, gt));
     free_image(im);
     free_image(resized);
@@ -356,19 +354,19 @@ int do_test()
 
 void run_tests()
 {
-    test_get_pixel();
-    test_set_pixel();
-    test_copy();
-    test_shift();
-    test_grayscale();
-    test_rgb_to_hsv();
-    test_hsv_to_rgb();
-    test_nn_resize();
-    test_bl_resize();
-    test_multiple_resize();
-    test_gaussian_filter();
-    test_sharpen_filter();
-    test_emboss_filter();
+    // test_get_pixel();
+    // test_set_pixel();
+    // test_copy();
+    // test_shift();
+    // test_grayscale();
+    // test_rgb_to_hsv();
+    // test_hsv_to_rgb();
+    // test_nn_resize();
+    // test_bl_resize();
+    // test_multiple_resize();
+    // test_gaussian_filter();
+    // test_sharpen_filter();
+    // test_emboss_filter();
     test_highpass_filter();
     test_convolution();
     test_gaussian_blur();

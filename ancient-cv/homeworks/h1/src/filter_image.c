@@ -38,7 +38,7 @@ image make_box_filter(int w)
 
     int i, j;
     image box_filter = make_image(w, w, 1);
-    float val = 1/(w*w);
+    float val = 1.0f/(float)(w*w);
     for(i = 0; i < w; i++)
     {
         for(j = 0; j < w; j++)
@@ -57,16 +57,16 @@ float do_convolution(image im, image filter, int x, int y, int im_c, int f_c)
     float new_val = 0.f;
     int i, j, ii, jj;
     ii = x - (filter.w/2);
-    jj = y - (filter.h/2);
     for(i = 0; i < filter.w; i++, ii++)
     {
+        jj = y - (filter.h/2);
         for(j = 0; j < filter.h; j++, jj++)
         {
             new_val += get_pixel(filter, i, j, f_c)*get_pixel(im, ii, jj, im_c);
         }   
     }
 
-    return new_val/(float)(filter.w*filter.h);
+    return new_val;
 }
 
 image convolve_image(image im, image filter, int preserve)
@@ -74,10 +74,11 @@ image convolve_image(image im, image filter, int preserve)
     assert(im.c == filter.c || filter.c == 1);
 
     int i, j, k; 
-    image filtered = copy_image(im);
+    int c = preserve ? im.c : 1;
+    image filtered = make_image(im.w, im.h, c);
 
 
-    if(im.c == filter.c && filter.c != 1)
+    if(im.c == filter.c)
     {
         for(i = 0; i < im.w; i++)
         {
@@ -90,26 +91,16 @@ image convolve_image(image im, image filter, int preserve)
             }
         }
     }
-    else if(preserve == 1)
+    else
     {
-        for(i = 0; i < im.w; i++)
+        for(i = 0; i < filtered.w; i++)
         {
-            for(j = 0; j < im.h; j++)
+            for(j = 0; j < filtered.h; j++)
             {
-                for(k = 0; k < im.c; k++)
+                for(k = 0; k < filtered.c; k++)
                 {
                     set_pixel(filtered, i, j, k, do_convolution(im, filter, i, j, k, 0));
                 }
-            }
-        }
-    }
-    else
-    {
-        for(i = 0; i < im.w; i++)
-        {
-            for(j = 0; j < im.h; j++)
-            {
-                set_pixel(filtered, i, j, k, do_convolution(im, filter, i, j, 0, 0));
             }
         }
     }
@@ -119,27 +110,41 @@ image convolve_image(image im, image filter, int preserve)
 
 image make_highpass_filter()
 {
-    // TODO
-    return make_image(1,1,1);
+    image filter = make_image(3, 3, 1);
+    float s = 1.0f;
+    float data[] = { 0.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 4.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 0.0f/s };
+    memcpy(filter.data, data , sizeof(float)*3*3);
+
+    return filter;
 }
 
 image make_sharpen_filter()
 {
-    // TODO
-    return make_image(1,1,1);
+    image filter = make_image(3, 3, 1);
+    float s = 1.0f;
+    float data[] = { 0.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 5.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 0.0f/s };
+    memcpy(filter.data, data , sizeof(float)*3*3);
+
+    return filter;
 }
+
 
 image make_emboss_filter()
 {
-    // TODO
+    image filter = make_image(3, 3, 1);
+    float s = 1.0f;
+    float data[] = { -2.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 1.0f/s, 1.0f/s, 0.0f/s, 1.0f/s, 2.0f/s };
+    memcpy(filter.data, data , sizeof(float)*3*3);
+
+    return filter;
     return make_image(1,1,1);
 }
 
 // Question 2.2.1: Which of these filters should we use preserve when we run our convolution and which ones should we not? Why?
-// Answer: TODO
+// Answer: highpass - no preserve, finds edges, no color needed. Sharpen+emboss - do stylistical modifications to image, thus preserve shall be used to keep 3 channels.
 
 // Question 2.2.2: Do we have to do any post-processing for the above filters? Which ones and why?
-// Answer: TODO
+// Answer: yes for sharpen and emboss we need to clamp image since the sum of the values is not 0
 
 image make_gaussian_filter(float sigma)
 {
