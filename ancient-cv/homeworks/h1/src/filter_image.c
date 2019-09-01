@@ -111,8 +111,7 @@ image convolve_image(image im, image filter, int preserve)
 image make_highpass_filter()
 {
     image filter = make_image(3, 3, 1);
-    float s = 1.0f;
-    float data[] = { 0.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 4.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 0.0f/s };
+    float data[] = { 0.0f, -1.0f, 0.0f, -1.0f, 4.0f, -1.0f, 0.0f, -1.0f, 0.0f };
     memcpy(filter.data, data , sizeof(float)*3*3);
 
     return filter;
@@ -121,8 +120,7 @@ image make_highpass_filter()
 image make_sharpen_filter()
 {
     image filter = make_image(3, 3, 1);
-    float s = 1.0f;
-    float data[] = { 0.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 5.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 0.0f/s };
+    float data[] = { 0.0f, -1.0f, 0.0f, -1.0f, 5.0f, -1.0f, 0.0f, -1.0f, 0.0f };
     memcpy(filter.data, data , sizeof(float)*3*3);
 
     return filter;
@@ -132,12 +130,10 @@ image make_sharpen_filter()
 image make_emboss_filter()
 {
     image filter = make_image(3, 3, 1);
-    float s = 1.0f;
-    float data[] = { -2.0f/s, -1.0f/s, 0.0f/s, -1.0f/s, 1.0f/s, 1.0f/s, 0.0f/s, 1.0f/s, 2.0f/s };
+    float data[] = { -2.0f, -1.0f, 0.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 2.0f };
     memcpy(filter.data, data , sizeof(float)*3*3);
 
     return filter;
-    return make_image(1,1,1);
 }
 
 // Question 2.2.1: Which of these filters should we use preserve when we run our convolution and which ones should we not? Why?
@@ -148,8 +144,24 @@ image make_emboss_filter()
 
 image make_gaussian_filter(float sigma)
 {
-    // TODO
-    return make_image(1,1,1);
+    int x, y;
+    int w = (int)ceil(sigma*6);
+    float sigma2 = sigma*sigma;
+    image filter = make_image(w, w, 1);
+    
+    w = (w % 2 == 0) ? (w+1) : w;
+
+    for(x = 0; x < w; x++)
+    {
+        for(y = 0; y < w; y++)
+        {
+            float val = 1.0f/(TWOPI*sigma2)*exp(-((float)(x*x+y*y))/(2.0f*sigma2));
+            set_pixel(filter, x, y, 0, val);
+        }
+    }
+
+    l1_normalize(filter);
+    return filter;
 }
 
 image add_image(image a, image b)

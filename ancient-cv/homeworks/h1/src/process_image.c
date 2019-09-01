@@ -4,7 +4,7 @@
 #include <math.h>
 #include "image.h"
 
-float fclamp(float v, float low, float high)
+float fclamp(float low, float v, float high)
 {
     return fmax(low, fmin(v, high));
 }
