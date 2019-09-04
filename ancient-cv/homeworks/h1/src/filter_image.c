@@ -165,18 +165,21 @@ image make_emboss_filter()
 
 image make_gaussian_filter(float sigma)
 {
-    int x, y;
+    int x, y, xx, yy;
     int w = (int)ceil(sigma*6);
     float sigma2 = sigma*sigma;
     
     w = (w % 2 == 0) ? (w+1) : w;
 
     image filter = make_image(w, w, 1);
-    for(x = 0; x < w; x++)
+    
+    xx = -(w/2);
+    for(x = 0; x < w; x++, xx++)
     {
-        for(y = 0; y < w; y++)
+        yy = -(w/2);
+        for(y = 0; y < w; y++, yy++)
         {
-            float val = 1.0f/(TWOPI*sigma2)*exp(-((float)(x*x+y*y))/(2.0f*sigma2));
+            float val = 1.0f/(TWOPI*sigma2)*exp(-((float)(xx*xx+yy*yy))/(2.0f*sigma2));
             set_pixel(filter, x, y, 0, val);
         }
     }
@@ -220,7 +223,7 @@ image sub_image(image a, image b)
         {
             for(k = 0; k < a.c; k++)
             {
-                float subtracted_val = get_pixel(b, i, j, k)-get_pixel(a, i, j, k);
+                float subtracted_val = get_pixel(a, i, j, k)-get_pixel(b, i, j, k);
                 set_pixel(subtracted, i, j, k, subtracted_val);
             }
         }
@@ -231,29 +234,114 @@ image sub_image(image a, image b)
 
 image make_gx_filter()
 {
-    // TODO
-    return make_image(1,1,1);
+    image filter = make_image(3, 3, 1);
+    float data[] = { -1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f };
+    memcpy(filter.data, data , sizeof(float)*3*3);
+
+    return filter;
 }
 
 image make_gy_filter()
 {
-    // TODO
-    return make_image(1,1,1);
+    image filter = make_image(3, 3, 1);
+    float data[] = { -1.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 1.0f };
+    memcpy(filter.data, data , sizeof(float)*3*3);
+
+    return filter;
 }
 
 void feature_normalize(image im)
 {
-    // TODO
+    int i, j, k;
+    float minv = 999999999;
+    float maxv = -999999999;
+    for(i = 0; i < im.w; i++)
+    {
+        for(j = 0; j < im.h; j++)
+        {
+            for(k = 0; k < im.c; k++)
+            {
+                float pixval = get_pixel(im, i, j, k);
+                minv = fmin(minv, pixval);
+                maxv = fmax(maxv, pixval);  
+            }
+        }
+    }
+    float range = maxv-minv;
+    if(abs(range) < 1.0E-9f)
+    {
+        memset(im.data, 0, sizeof(float)*im.w*im.h*im.c);
+    }
+    else
+    {
+        for(i = 0; i < im.w; i++)
+        {
+            for(j = 0; j < im.h; j++)
+            {
+                for(k = 0; k < im.c; k++)
+                {
+                    float pixval = get_pixel(im, i, j, k);
+                    set_pixel(im, i, j, k, (pixval-minv)/(range));
+                }
+            }
+        }
+    }
 }
 
 image *sobel_image(image im)
 {
-    // TODO
-    return calloc(2, sizeof(image));
+    image gxf = make_gx_filter();
+    image gyf = make_gy_filter();
+    image gx = convolve_image(im, gxf, 0);
+    image gy = convolve_image(im, gyf, 0);
+
+    image mag = make_image(gx.w, gx.h, gx.c);
+    image grd = make_image(gx.w, gx.h, gx.c);
+
+    int i,j;
+    for(i = 0; i < im.w; i++)
+    {
+        for(j = 0; j < im.h; j++)
+        {
+            float gxv = get_pixel(gx, i, j, 0);
+            float gyv = get_pixel(gy, i, j, 0);
+            set_pixel(mag, i, j, 0, sqrt((gxv*gxv) + (gyv*gyv)));
+            set_pixel(grd, i, j, 0, atan2(gyv,gxv));
+        }
+    }
+
+    image* sobel_result = calloc(2, sizeof(image));
+    sobel_result[0] = mag;
+    sobel_result[1] = grd;
+
+    return sobel_result;
 }
 
 image colorize_sobel(image im)
 {
-    // TODO
-    return make_image(1,1,1);
+    image gauss5 = make_gaussian_filter(5);
+    im = convolve_image(im, gauss5, 1);
+
+    image *sobel_result = sobel_image(im);
+    image mag = convolve_image(sobel_result[0], gauss5, 0);
+    //image grd = sobel_result[1];
+    image grd = convolve_image(sobel_result[1], gauss5, 0);
+    image result_image = make_image(im.w, im.h, im.c);
+
+    int i,j;
+    for(i = 0; i < im.w; i++)
+    {
+        for(j = 0; j < im.h; j++)
+        {
+            float magv = get_pixel(mag, i, j, 0);
+            float grdv = get_pixel(grd, i, j, 0);
+            set_pixel(result_image, i, j, 0, grdv);
+            set_pixel(result_image, i, j, 1, magv);
+            set_pixel(result_image, i, j, 2, magv);
+        }
+    }
+
+    hsv_to_rgb(result_image);
+
+    return result_image;
 }

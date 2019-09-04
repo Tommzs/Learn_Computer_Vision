@@ -234,8 +234,8 @@ void test_convolution(){
 
 void test_gaussian_filter(){
     image f = make_gaussian_filter(7);
-    int i;
 
+    int i;
     for(i = 0; i < f.w * f.h * f.c; i++){
         f.data[i] *= 100;
     }
@@ -354,22 +354,22 @@ int do_test()
 
 void run_tests()
 {
-    // test_get_pixel();
-    // test_set_pixel();
-    // test_copy();
-    // test_shift();
-    // test_grayscale();
-    // test_rgb_to_hsv();
-    // test_hsv_to_rgb();
-    // test_nn_resize();
-    // test_bl_resize();
-    // test_multiple_resize();
-    // test_gaussian_filter();
-    // test_sharpen_filter();
-    // test_emboss_filter();
-    // test_highpass_filter();
-    // test_convolution();
-    // test_gaussian_blur();
+    test_get_pixel();
+    test_set_pixel();
+    test_copy();
+    test_shift();
+    test_grayscale();
+    test_rgb_to_hsv();
+    test_hsv_to_rgb();
+    test_nn_resize();
+    test_bl_resize();
+    test_multiple_resize();
+    test_gaussian_filter();
+    test_sharpen_filter();
+    test_emboss_filter();
+    test_highpass_filter();
+    test_convolution();
+    test_gaussian_blur();
     test_hybrid_image();
     test_frequency_image();
     test_sobel();

@@ -28,8 +28,8 @@ float get_pixel(image im, int x, int y, int c)
 {
     int W = im.w;
     int H = im.h;
-    x = clamp(x, 0, W);
-    y = clamp(y, 0, H);
+    x = clamp(x, 0, (W-1));
+    y = clamp(y, 0, (H-1));
     int index = x+y*W+c*W*H;
     return im.data[index];
 }
@@ -38,8 +38,8 @@ void set_pixel(image im, int x, int y, int c, float v)
 {
     int W = im.w;
     int H = im.h;
-    x = clamp(x, 0, W);
-    y = clamp(y, 0, H);
+    x = clamp(x, 0, (W-1));
+    y = clamp(y, 0, (H-1));
     int index = x+y*W+c*W*H;
     im.data[index] = v;
 }
