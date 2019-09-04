@@ -323,10 +323,14 @@ image colorize_sobel(image im)
     im = convolve_image(im, gauss5, 1);
 
     image *sobel_result = sobel_image(im);
-    image mag = convolve_image(sobel_result[0], gauss5, 0);
-    //image grd = sobel_result[1];
-    image grd = convolve_image(sobel_result[1], gauss5, 0);
+    image mag = sobel_result[0];
+    //image mag = convolve_image(sobel_result[0], gauss5, 0);
+    image grd = sobel_result[1];
+    //image grd = convolve_image(sobel_result[1], gauss5, 0);
     image result_image = make_image(im.w, im.h, im.c);
+
+    feature_normalize(mag);
+    feature_normalize(grd);
 
     int i,j;
     for(i = 0; i < im.w; i++)
