@@ -48,6 +48,7 @@ Join the #Computer_Vision_curriculum channel in our Slack channel to find one ht
 - http://szeliski.org/Book/drafts/SzeliskiBook_20100903_draft.pdf  Sec 3.1.1-2, 3.2 Sec 3.2.3, 4.2 3.3.2-4
 #### Project
 - Detect an object in an image via the OpenCV Library
+- T added: H0 from ancients secrests of CV
 
 ### Week 2 (Motion and Optical Flow)
 - Motion Analyis
@@ -55,11 +56,13 @@ Join the #Computer_Vision_curriculum channel in our Slack channel to find one ht
 #### Video Lectures
 - https://www.udacity.com/course/introduction-to-computer-vision--ud810 Udacity lesson 6
 - https://www.youtube.com/watch?v=-nt80JUNwlw&list=PLjMXczUzEYcHvw5YYSU92WrY8IwhTuq7p&index=2 video 8
+- T added: also video 6+7
 - https://www.youtube.com/watch?v=wC8hXuHsHAQ&list=PLvqB6_mDBCdlnT84LK_NvbOqcXLlOTR8j&index=6&t=0s 
 #### Reading Assignments
 - http://szeliski.org/Book/drafts/SzeliskiBook_20100903_draft.pdf   Sec 10.5 Sec 8.4 (up until 8.4.1)
 #### Project
 - Track a moving object in a video frame with OpenCV
+- T added: H1 from ancients secrests of CV
 
 ### Part 2: Mid Level Vision (image > features)
 
