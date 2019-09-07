@@ -268,7 +268,7 @@ void feature_normalize(image im)
         }
     }
     float range = maxv-minv;
-    if(abs(range) < 1.0E-9f)
+    if(fabsf(range) < 1.0E-9f)
     {
         memset(im.data, 0, sizeof(float)*im.w*im.h*im.c);
     }
